@@ -18,7 +18,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import br.com.diegomauricio.predojo.dao.PartidaDAO;
-import br.com.diegomauricio.predojo.exception.PreDojoException;
 import br.com.diegomauricio.predojo.model.Jogador;
 import br.com.diegomauricio.predojo.model.Partida;
 
