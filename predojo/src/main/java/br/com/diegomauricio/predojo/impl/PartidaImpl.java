@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -42,8 +41,19 @@ public class PartidaImpl {
 			BufferedReader br = new BufferedReader(reader);
 			String linha = br.readLine();
 			while (linha != null && !linha.isEmpty()) {
-				partida = processarLinhaAtual(linha, partida);
-				partidas.add(partida);
+				TipoLinhaEnum tipoLinha = getTipoDaLinha(linha);
+
+				if (tipoLinha == TipoLinhaEnum.INICIAR_PARTIDA) {
+					partida = LogParser.getParserInicioPartida(tipoLinha, linha, partida);
+					partidas.add(partida);
+				} else if (tipoLinha == TipoLinhaEnum.JOGADOR_ASSASSINO) {
+					partida = LogParser.getParserJogadoresAssasino(tipoLinha, linha, partida);
+				} else if (tipoLinha == TipoLinhaEnum.WORLD_ASSASINO) {
+					partida = LogParser.getParserWordAssasino(tipoLinha, linha, partida);
+				} else if (tipoLinha == TipoLinhaEnum.FINALIZAR_PARTIDA) {
+					partida = LogParser.getParserFimPartida(tipoLinha, linha, partida);
+				}
+
 				linha = br.readLine();
 			}
 			br.close();
@@ -55,23 +65,6 @@ public class PartidaImpl {
 		}
 
 		return partidas;
-	}
-
-	/**
-	 * Processar a linha atual
-	 * 
-	 * @param linha
-	 *            linha atual do arquivo log
-	 * @param partidaAtual
-	 *            partida corrente
-	 * @return a partida populada
-	 * @throws ParseException
-	 *             erro de parse
-	 */
-	private Partida processarLinhaAtual(String linha, Partida partida) throws ParseException {
-		TipoLinhaEnum tipoLinha = getTipoDaLinha(linha);
-		Partida parser = LogParser.getParser(tipoLinha, linha, partida);
-		return parser;
 	}
 
 	/**

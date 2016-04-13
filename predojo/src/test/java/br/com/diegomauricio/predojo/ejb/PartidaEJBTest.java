@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import br.com.diegomauricio.predojo.dao.PartidaDAO;
+import br.com.diegomauricio.predojo.exception.PreDojoException;
 import br.com.diegomauricio.predojo.model.Jogador;
 import br.com.diegomauricio.predojo.model.Partida;
 
@@ -58,26 +59,6 @@ public class PartidaEJBTest {
 		String msgRetorno = partidaEJB.salvarPartidas(partidas);
 
 		assertEquals("salvo com sucesso", msgRetorno);
-
-	}
-
-	/**
-	 * Teste para salvar com erro
-	 */
-	@Test
-	public void testSalvarLogComErro() {
-		Set<Partida> partidas = new HashSet<Partida>();
-		Partida partida = new Partida(CD_PARTIDA, DATA_INICIO);
-
-		Mockito.when(partidaDAO.salvarPartida(partida)).thenReturn(partida);
-		partidas.add(partida);
-
-		Mockito.when(partidaEJB.salvarPartidas(partidas)).thenReturn(
-				"não existe registro para salvar");
-
-		String msgRetorno = partidaEJB.salvarPartidas(partidas);
-
-		assertEquals("não existe registro para salvar", msgRetorno);
 
 	}
 

@@ -29,9 +29,8 @@ public class PartidaEJB {
 		while (carrosAsIterator.hasNext()) {
 			Partida partida = carrosAsIterator.next();
 			partidaDAO.salvarPartida(partida);
-			return "salvo com sucesso";
 		}
-		return "não existe registro para salvar";
+		return "salvo com sucesso";
 	}
 
 	/**

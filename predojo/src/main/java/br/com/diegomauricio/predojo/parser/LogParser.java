@@ -24,111 +24,156 @@ public class LogParser {
 	private static Matcher matcher;
 
 	/**
+	 * Método responsável pelo parse quando começa uma partida
 	 * 
 	 * @param tipoLinha
-	 *            tipo da linha classificada como enum {@link TipoLinhaEnum}
+	 *            tipo da linha enum
 	 * @param linha
 	 *            linha corrente do arquivo
 	 * @param partida
-	 *            a partida
-	 * @return a partida populada com os parser
+	 *            partida atual
+	 * @return partida
 	 * @throws ParseException
-	 *             caso ocorra algum erro no parser
+	 *             erro de parse
 	 */
-	public static synchronized Partida getParser(TipoLinhaEnum tipoLinha, String linha,
+	public static Partida getParserInicioPartida(TipoLinhaEnum tipoLinha, String linha,
 			Partida partida) throws ParseException {
-		if (tipoLinha == TipoLinhaEnum.INICIAR_PARTIDA) {
-			pattern = Pattern.compile(TipoLinhaEnum.INICIAR_PARTIDA.getRegex());
-			matcher = pattern.matcher(linha);
-			if (matcher.find()) {
-				Date dataInicio = dataUtil.getData(matcher.group(1));
-				long cdPartida = Long.parseLong(matcher.group(4));
-				partida = new Partida(cdPartida, dataInicio);
-				partida.setJogadores(new ArrayList<Jogador>());
-			}
+		pattern = Pattern.compile(TipoLinhaEnum.INICIAR_PARTIDA.getRegex());
+		matcher = pattern.matcher(linha);
+		if (matcher.find()) {
+			Date dataInicio = dataUtil.getData(matcher.group(1));
+			long cdPartida = Long.parseLong(matcher.group(4));
+			partida = new Partida(cdPartida, dataInicio);
+			partida.setJogadores(new ArrayList<Jogador>());
+		}
+		return partida;
+	}
 
-		} else if (tipoLinha == TipoLinhaEnum.JOGADOR_ASSASSINO) {
-			pattern = Pattern.compile(TipoLinhaEnum.JOGADOR_ASSASSINO.getRegex());
-			matcher = pattern.matcher(linha);
-			if (matcher.find()) {
+	/**
+	 * Método responsável pelo parse quando um jogador mata outro
+	 * 
+	 * @param tipoLinha
+	 *            tipo da linha enum
+	 * @param linha
+	 *            linha corrente do arquivo
+	 * @param partida
+	 *            partida atual
+	 * @return partida
+	 * @throws ParseException
+	 *             erro de parse
+	 */
+	public static Partida getParserJogadoresAssasino(TipoLinhaEnum tipoLinha, String linha,
+			Partida partida) throws ParseException {
+		pattern = Pattern.compile(TipoLinhaEnum.JOGADOR_ASSASSINO.getRegex());
+		matcher = pattern.matcher(linha);
+		if (matcher.find()) {
 
-				boolean jaExiste = false;
+			boolean jaExiste = false;
 
-				if (partida.getJogadores().size() > 0) {
-					for (int i = 0; i < partida.getJogadores().size(); i++) {
-						Jogador jogador = partida.getJogadores().get(i);
-						if (matcher.group(3).equals(jogador.getNome())) {
-							partida.getJogadores().get(i)
-									.setQtdMortesPartida(jogador.getQtdAssassinatosPartida() + 1);
-							jaExiste = true;
-							break;
-						}
+			if (partida.getJogadores().size() > 0) {
+				for (int i = 0; i < partida.getJogadores().size(); i++) {
+					Jogador jogador = partida.getJogadores().get(i);
+					if (matcher.group(3).equals(jogador.getNome())) {
+						partida.getJogadores().get(i)
+								.setQtdMortesPartida(jogador.getQtdAssassinatosPartida() + 1);
+						jaExiste = true;
+						break;
 					}
-				}
-
-				if (!jaExiste) {
-					Jogador jogadorNew = new Jogador(matcher.group(3));
-					jogadorNew.setQtdAssassinatosPartida(1);
-					partida.getJogadores().add(jogadorNew);
-				}
-
-				jaExiste = false;
-
-				if (partida.getJogadores().size() > 0) {
-					for (int i = 0; i < partida.getJogadores().size(); i++) {
-						Jogador jogador = partida.getJogadores().get(i);
-						if (matcher.group(5).equals(jogador.getNome())) {
-							partida.getJogadores().get(i)
-									.setQtdMortesPartida(jogador.getQtdMortesPartida() + 1);
-							jaExiste = true;
-							break;
-						}
-					}
-				}
-
-				if (!jaExiste) {
-					Jogador jogadorNew = new Jogador(matcher.group(5));
-					jogadorNew.setQtdMortesPartida(1);
-					partida.getJogadores().add(jogadorNew);
 				}
 			}
 
-		} else if (tipoLinha == TipoLinhaEnum.WORLD_ASSASINO) {
-			pattern = Pattern.compile(TipoLinhaEnum.WORLD_ASSASINO.getRegex());
-			matcher = pattern.matcher(linha);
-			if (matcher.find()) {
+			if (!jaExiste) {
+				Jogador jogadorNew = new Jogador(matcher.group(3));
+				jogadorNew.setQtdAssassinatosPartida(1);
+				partida.getJogadores().add(jogadorNew);
+			}
 
-				boolean jaExiste = false;
+			jaExiste = false;
 
-				if (partida.getJogadores().size() > 0) {
-					for (int i = 0; i < partida.getJogadores().size(); i++) {
-						Jogador jogador = partida.getJogadores().get(i);
-						if (matcher.group(5).equals(jogador.getNome())) {
-							partida.getJogadores().get(i)
-									.setQtdMortesPartida(jogador.getQtdMortesPartida() + 1);
-							jaExiste = true;
-							break;
-						}
+			if (partida.getJogadores().size() > 0) {
+				for (int i = 0; i < partida.getJogadores().size(); i++) {
+					Jogador jogador = partida.getJogadores().get(i);
+					if (matcher.group(5).equals(jogador.getNome())) {
+						partida.getJogadores().get(i)
+								.setQtdMortesPartida(jogador.getQtdMortesPartida() + 1);
+						jaExiste = true;
+						break;
 					}
 				}
+			}
 
-				if (!jaExiste) {
-					Jogador jogadorNew = new Jogador(matcher.group(5));
-					jogadorNew.setQtdMortesPartida(1);
-					partida.getJogadores().add(jogadorNew);
+			if (!jaExiste) {
+				Jogador jogadorNew = new Jogador(matcher.group(5));
+				jogadorNew.setQtdMortesPartida(1);
+				partida.getJogadores().add(jogadorNew);
+			}
+		}
+		return partida;
+	}
+
+	/**
+	 * Método responsável pelo parse quando world mata um jogador
+	 * 
+	 * @param tipoLinha
+	 *            tipo da linha enum
+	 * @param linha
+	 *            linha corrente do arquivo
+	 * @param partida
+	 *            partida atual
+	 * @return partida
+	 * @throws ParseException
+	 *             erro de parse
+	 */
+	public static Partida getParserWordAssasino(TipoLinhaEnum tipoLinha, String linha,
+			Partida partida) throws ParseException {
+		pattern = Pattern.compile(TipoLinhaEnum.WORLD_ASSASINO.getRegex());
+		matcher = pattern.matcher(linha);
+		if (matcher.find()) {
+
+			boolean jaExiste = false;
+
+			if (partida.getJogadores().size() > 0) {
+				for (int i = 0; i < partida.getJogadores().size(); i++) {
+					Jogador jogador = partida.getJogadores().get(i);
+					if (matcher.group(5).equals(jogador.getNome())) {
+						partida.getJogadores().get(i)
+								.setQtdMortesPartida(jogador.getQtdMortesPartida() + 1);
+						jaExiste = true;
+						break;
+					}
 				}
+			}
 
+			if (!jaExiste) {
+				Jogador jogadorNew = new Jogador(matcher.group(5));
+				jogadorNew.setQtdMortesPartida(1);
+				partida.getJogadores().add(jogadorNew);
 			}
 
 		}
+		return partida;
+	}
 
-		else if (tipoLinha == TipoLinhaEnum.FINALIZAR_PARTIDA) {
-			pattern = Pattern.compile(TipoLinhaEnum.FINALIZAR_PARTIDA.getRegex());
-			matcher = pattern.matcher(linha);
-			if (matcher.find()) {
-				Date dataFim = dataUtil.getData(matcher.group(1));
-				partida.setDataFim(dataFim);
-			}
+	/**
+	 * Método responsável pelo parse quando finaliza a partida
+	 * 
+	 * @param tipoLinha
+	 *            tipo da linha enum
+	 * @param linha
+	 *            linha corrente do arquivo
+	 * @param partida
+	 *            partida atual
+	 * @return partida
+	 * @throws ParseException
+	 *             erro de parse
+	 */
+	public static Partida getParserFimPartida(TipoLinhaEnum tipoLinha, String linha, Partida partida)
+			throws ParseException {
+		pattern = Pattern.compile(TipoLinhaEnum.FINALIZAR_PARTIDA.getRegex());
+		matcher = pattern.matcher(linha);
+		if (matcher.find()) {
+			Date dataFim = dataUtil.getData(matcher.group(1));
+			partida.setDataFim(dataFim);
 		}
 		return partida;
 	}

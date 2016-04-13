@@ -10,10 +10,10 @@ import java.util.regex.Pattern;
  */
 public enum TipoLinhaEnum {
 
-	INICIAR_PARTIDA("^([\\w/]+\\s[\\w:]+) (-) (New match) ([0-9]{5,20}) (has started)"), 
+	INICIAR_PARTIDA("^([\\w/]+\\s[\\w:]+) (-) (New match) ([0-9]+) (has started)"), 
 	JOGADOR_ASSASSINO("^([\\w/]+\\s[\\w:]+) (-) ([\\w]+) (killed) ([\\w]+) (using) ([\\w]+)"), 
 	WORLD_ASSASINO("^([\\w/]+\\s[\\w:]+) (-) (<WORLD>) (killed) ([\\w]+) (by) ([\\w]+)"), 
-	FINALIZAR_PARTIDA("^([\\w/]+\\s[\\w:]+) (-) (Match) ([0-9]{5,20}) (has ended)");
+	FINALIZAR_PARTIDA("^([\\w/]+\\s[\\w:]+) (-) (Match) ([0-9]+) (has ended)");
 
 	private final String regex;
 	private final Pattern pattern;
